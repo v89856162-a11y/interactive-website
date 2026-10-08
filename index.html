@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spades Card Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Setup Screen -->
+        <div id="setupScreen" class="screen active">
+            <div class="setup-container">
+                <h1>♠️ Spades Game</h1>
+                <p class="subtitle">Configure Your Game</p>
+                
+                <div class="setup-form">
+                    <div class="form-group">
+                        <label for="numPlayers">Number of Players:</label>
+                        <select id="numPlayers">
+                            <option value="2">2 Players</option>
+                            <option value="3">3 Players</option>
+                            <option value="4" selected>4 Players</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="playerNames">Player Names:</label>
+                        <div id="playerNamesContainer"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gameMode">Game Mode:</label>
+                        <select id="gameMode">
+                            <option value="classic">Classic (13 Rounds)</option>
+                            <option value="short">Short Game (6 Rounds)</option>
+                            <option value="marathon">Marathon (20 Rounds)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="soundToggle" checked>
+                            Enable Sound Effects
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="darkMode">
+                            Dark Mode
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-large" onclick="startGame()">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="game-container">
+                <!-- Header -->
+                <header class="game-header">
+                    <div class="header-left">
+                        <h2>♠️ Spades</h2>
+                        <div class="round-info">Round <span id="currentRound">1</span> of <span id="totalRounds">13</span></div>
+                    </div>
+                    <div class="header-right">
+                        <button class="btn btn-secondary" onclick="pauseGame()">Pause</button>
+                        <button class="btn btn-secondary" onclick="showMenu()">Menu</button>
+                    </div>
+                </header>
+
+                <!-- Scoreboard -->
+                <div class="scoreboard">
+                    <div id="scoreboardContainer" class="scores-grid"></div>
+                </div>
+
+                <!-- Game Area -->
+                <div class="game-area">
+                    <!-- Trick Display -->
+                    <div class="trick-display">
+                        <h3>Current Trick</h3>
+                        <div id="trickCards" class="trick-cards"></div>
+                    </div>
+
+                    <!-- Bidding Phase -->
+                    <div id="biddingPhase" class="phase-container">
+                        <h3>Bidding Phase</h3>
+                        <div class="bid-display">
+                            <div id="bidsContainer" class="bids-grid"></div>
+                        </div>
+                        <div id="currentPlayerBidding" class="current-action">
+                            <p id="biddingPrompt"></p>
+                            <div class="bid-buttons">
+                                <button class="btn btn-bid" onclick="placeBid(0)">0</button>
+                                <button class="btn btn-bid" onclick="placeBid(1)">1</button>
+                                <button class="btn btn-bid" onclick="placeBid(2)">2</button>
+                                <button class="btn btn-bid" onclick="placeBid(3)">3</button>
+                                <button class="btn btn-bid" onclick="placeBid(4)">4</button>
+                                <button class="btn btn-bid" onclick="placeBid(5)">5</button>
+                                <button class="btn btn-bid" onclick="placeBid(6)">6</button>
+                                <button class="btn btn-bid" onclick="placeBid(7)">7</button>
+                                <button class="btn btn-bid" onclick="placeBid(8)">8</button>
+                                <button class="btn btn-bid" onclick="placeBid(9)">9</button>
+                                <button class="btn btn-bid" onclick="placeBid(10)">10</button>
+                                <button class="btn btn-bid" onclick="placeBid(11)">11</button>
+                                <button class="btn btn-bid" onclick="placeBid(12)">12</button>
+                                <button class="btn btn-bid" onclick="placeBid(13)">13</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Playing Phase -->
+                    <div id="playingPhase" class="phase-container hidden">
+                        <h3>Playing Phase</h3>
+                        <div id="currentPlayerAction" class="current-action"></div>
+                        <div class="hand-container">
+                            <h4>Your Hand</h4>
+                            <div id="playerHand" class="player-hand"></div>
+                        </div>
+                    </div>
+
+                    <!-- Round Results -->
+                    <div id="roundResults" class="phase-container hidden">
+                        <h3>Round Complete</h3>
+                        <div id="roundResultsContent" class="results-content"></div>
+                        <button class="btn btn-primary" onclick="nextRound()">Next Round</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pause Menu -->
+        <div id="pauseMenu" class="modal hidden">
+            <div class="modal-content">
+                <h2>Game Paused</h2>
+                <button class="btn btn-primary" onclick="resumeGame()">Resume</button>
+                <button class="btn btn-secondary" onclick="showMenu()">Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="mainMenu" class="modal hidden">
+            <div class="modal-content">
+                <h2>Main Menu</h2>
+                <p>Return to main menu? Your game progress will be lost.</p>
+                <button class="btn btn-primary" onclick="closeMenu()">Continue Playing</button>
+                <button class="btn btn-danger" onclick="returnToSetup()">Return to Setup</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="gameover-container">
+                <h1>Game Over!</h1>
+                <div id="finalScores" class="final-scores"></div>
+                <h2 id="winner" class="winner"></h2>
+                <button class="btn btn-primary btn-large" onclick="returnToSetup()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
